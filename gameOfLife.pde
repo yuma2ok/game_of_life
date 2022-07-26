@@ -1,11 +1,11 @@
 int[][] cell;
 int[][] temp;
 int w, h;
-int cell_size = 2;
+int cell_size = 5;
 int numX, numY;
 
 void setup(){
-  size(500, 500);
+  size(800, 600);
   w = width;
   h = height;
   numX = w / cell_size;
@@ -14,32 +14,45 @@ void setup(){
   cell = new int [numX + 2][numY + 2];
   temp = new int [numX + 2][numY + 2];
   
-  setCell(cell, numX, numY);
+  cell = setCell(cell, numX, numY);
+  
   noStroke();
   frameRate(60);
+  
+  background(255);
 }
 
 void draw(){
+  
   drawCell(cell, numX, numY, cell_size);
   
   for(int x = 1; x < numX; x ++){
     for(int y = 1; y < numY; y++){
       int[] states = getStates(cell, x, y);
-      cell[x][y] = updateCell(states);
+      temp[x][y] = updateCell(states);
     }
   }
+  
+  for(int x = 1; x < numX; x ++){
+    for(int y = 1; y < numY; y++){
+      cell[x][y] = temp[x][y];
+    }
+  }
+  
 }
 
-void setCell(int[][] cell, int numX, int numY){
+int[][] setCell(int[][] cell, int numX, int numY){
  for(int x = 0; x < numX+2; x ++){
     for(int y = 0; y < numY+2; y++){
-      if(float(x+y)%2 == 1){
+      float n = random(1);
+      if(n > 0.7){
         cell[x][y] = 1;
       }else{
-        cell[x][y] = 0; 
+        cell[x][y] = 0;
       }
     }
   }
+  return cell;
 }
 
 void drawCell(int[][] cell, int numX, int numY, int cell_size){
@@ -77,17 +90,14 @@ int[] getStates(int[][] cell, int x, int y){
 
 int updateCell(int[] states){
   int aliveNum = 0;
-  for (int i = 1; i <= 8; i ++){
+  for (int i = 1; i < 9; i ++){
     aliveNum += states[i];
   }
-  
-  if(aliveNum <= 1 || aliveNum >= 4){
-    states[0] = 0;
+  if(aliveNum == 2){
+    return states[0];
+  }else if(aliveNum == 3){
+    return 1;
+  }else{
+    return 0;
   }
-  
-  if(aliveNum == 3){
-    states[0] = 1;
-  }
- 
-  return states[0];
 }
